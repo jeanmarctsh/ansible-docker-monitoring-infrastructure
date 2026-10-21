@@ -1,5 +1,5 @@
 services:
-  # 1 installation of Prometheus
+  # 1 Prometheus installation
   prometheus:
     image: prom/prometheus:v3.12
     container_name: prometheus
@@ -22,12 +22,6 @@ services:
     networks:
       - web_proxy
 
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.prometheus.rule=Host(`prometheus.local.com`)"
-      - "traefik.http.routers.prometheus.entrypoints=websecure"
-      - "traefik.http.routers.prometheus.tls=true"
-      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
 
   # 2. installation of Grafana
   
@@ -48,16 +42,9 @@ services:
     networks:
       - web_proxy
 
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.grafana.rule=Host(`grafana.local.com`)"
-      - "traefik.http.routers.grafana.entrypoints=websecure"
-      - "traefik.http.routers.grafana.tls=true"
-      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
-
       
   
-  # 3. installation de Cadvisor pour le monitoring de différents conteneurs docker (cpu, ram, etc...)
+  # 3. Cadvisor setup for monitoring docker containers (cpu, ram, etc...)
 
   cadvisor:
     image: ghcr.io/google/cadvisor:v0.56.2
@@ -76,71 +63,10 @@ services:
 
     networks:
       - web_proxy
-    
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.cadvisor.rule=Host(`cadvisor.local.fr`)"
-      - "traefik.http.routers.cadvisor.entrypoints=websecure"
-      - "traefik.http.routers.cadvisor.tls=true"
-      - "traefik.http.services.cadvisor.loadbalancer.server.port=8080"
 
-  # 4. Installation de Treafik comme reverse proxy en cours...
-  
-  traefik:
-    image: traefik:v3.7.5
-    container_name: traefik
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true ## best priv management, best way of security
-    networks:
-      - web_proxy
-    ports:
-      - "80:80"
-      - "4443:4443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./certs:/certs:ro
-      - ./dynamic:/dynamic:ro
-
-    command:
-      
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
-      - "--entrypoints.websecure.address=:4443"
-      - "--entrypoints.websecure.http.tls=true"
-
-      # static file which contains tls conf key
-      - "--providers.file.filename=/dynamic/tls.yaml"
-
-      # all about provider
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=web_proxy"
-
-     # Enable self‑routing
-    labels:
-      - "traefik.enable=true"
-
-      # Dashboard router
-      - "traefik.http.routers.dashboard.rule=Host(`dashboard.docker.localhost`)" ##               
-      - "traefik.http.routers.dashboard.entrypoints=websecure"
-      - "traefik.http.routers.dashboard.service=api@internal"
-      - "traefik.http.routers.dashboard.tls=true"
-      
-      #  Auth security
-     
-
-      
-
-
-  # 5. Installation d'alertmanager 
+  # 4. Installation d'alertmanager 
 
         
-
-  
-
 
 volumes:
   prometheus-data: {}
