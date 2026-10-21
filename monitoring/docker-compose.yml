@@ -6,8 +6,8 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./alert.rules.yml:/etc/prometheus/alert.rules.yml
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./rules:/etc/prometheus/rules:ro
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
     
     command: 
@@ -17,7 +17,7 @@ services:
 
     depends_on:
       - cadvisor 
-      - alertmanager
+      #- alertmanager
     
     networks:
       - web_proxy
