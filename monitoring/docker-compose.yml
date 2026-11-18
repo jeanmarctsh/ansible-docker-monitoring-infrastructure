@@ -1,7 +1,7 @@
 services:
   # 1 Prometheus installation
   prometheus:
-    image: prom/prometheus:v3.12
+    image: prom/prometheus:v3.16.0-rc.2
     container_name: prometheus
     ports:
       - "9090:9090"
@@ -26,7 +26,7 @@ services:
   # 2. installation of Grafana
   
   grafana: 
-    image: grafana/grafana:13
+    image: grafana/grafana:13.2.6
     container_name: grafana
     ports:
       - "3000:3000"
@@ -47,7 +47,7 @@ services:
   # 3. Cadvisor setup for monitoring docker containers (cpu, ram, etc...)
 
   cadvisor:
-    image: ghcr.io/google/cadvisor:v0.56.2
+    image: ghcr.io/google/cadvisor:v0.60.6
     container_name: cadvisor
     ports:
       - "8080:8080"

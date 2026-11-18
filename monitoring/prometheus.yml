@@ -32,10 +32,30 @@ scrape_configs:
     static_configs:
       - targets:
 
-          - "192.168.9.116:9100"
+          - "192.168.9.118:9100"
         labels:
           environment: "staging"
           role: "awx_server"
+          os: "linux"
+  
+  - job_name: 'HTTP_local_repository'
+    static_configs:
+      - targets:
+
+          - "192.168.9.120:9100"
+        labels:
+          environment: "staging"
+          role: "repo_server"
+          os: "linux"
+
+  - job_name: 'gitea_server'
+    static_configs:
+      - targets:
+
+          - "192.168.9.110:9100"
+        labels:
+          environment: "staging"
+          role: "gitea_server"
           os: "linux"
 
   # Linux HOST (worker_nodes)
